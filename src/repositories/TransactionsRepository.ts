@@ -23,9 +23,31 @@ class TransactionsRepository {
     return this.transactions;
   }
 
-  // public getBalance(): Balance {
-  //   // TODO
-  // }
+  public getBalance(): Balance {
+    return this.transactions.reduce(
+      (aggregated, current) => {
+        switch (current.type) {
+          case 'income':
+            return {
+              ...aggregated,
+              income: aggregated.income + current.value,
+              total: aggregated.total + current.value,
+            };
+
+          case 'outcome':
+            return {
+              ...aggregated,
+              outcome: aggregated.outcome + current.value,
+              total: aggregated.total - current.value,
+            };
+
+          default:
+            return aggregated;
+        }
+      },
+      { income: 0, outcome: 0, total: 0 },
+    );
+  }
 
   public create({ title, type, value }: CreateTransactionData): Transaction {
     const transaction = new Transaction({ title, type, value });
